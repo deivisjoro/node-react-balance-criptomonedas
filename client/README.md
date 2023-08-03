@@ -1,4 +1,4 @@
-# Fronted del cotizador
+# Frontend del cotizador
 
 Para instalar el frontend debe realizar los siguientes pasos:
 
