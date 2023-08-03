@@ -30,8 +30,6 @@ const useData = (data) => {
         }
     });
 
-    console.log(rows)
-
     return { headers, rows };
 
 }

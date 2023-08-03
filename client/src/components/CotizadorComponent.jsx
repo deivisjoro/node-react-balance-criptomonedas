@@ -18,7 +18,7 @@ const initialState = {
   }
 }
 
-const CotizadorComponent = ({prices}) => {
+const CotizadorComponent = ({coins}) => {
 
   const [inversion, setInvesion] = useState(0);
 
@@ -38,21 +38,20 @@ const CotizadorComponent = ({prices}) => {
   })
 
   useEffect(()=>{
-    if(prices.length>0){
-      
-      let element = prices.find(item=>item.symbol=='BTC');
-      const price_btc = element.metrics.market_data.price_usd; 
+    if(coins.length>0){      
+      let element = coins.find(item=>item.id=='bitcoin');
+      const price_btc = element.market_data.current_price.usd; 
       setPriceBitcoin(price_btc);
 
-      element = prices.find(item=>item.symbol=='ETH');
-      const price_eth = element.metrics.market_data.price_usd; 
+      element = coins.find(item=>item.id=='ethereum');
+      const price_eth = element.market_data.current_price.usd; 
       setPriceEthereum(price_eth);
 
-      element = prices.find(item=>item.symbol=='ADA');
-      const price_ada = element.metrics.market_data.price_usd; 
+      element = coins.find(item=>item.id=='cardano');
+      const price_ada = element.market_data.current_price.usd; 
       setPriceCardano(price_ada);
     }
-  }, [prices])
+  }, [coins])
 
   useEffect(()=>{    
     if(!isNaN(inversion) && inversion>0){
@@ -107,8 +106,14 @@ const CotizadorComponent = ({prices}) => {
     return new Intl.NumberFormat('en-US').format(value);
   }
 
+  const changeMonths = (value)=>{
+    if(value==0) return;
+
+    setMonths(value);
+  }
+
   return (
-    <div id="CotizadorComponent" className="w-full">
+    <div id="CotizadorComponent" className="w-full" data-testid="CotizadorComponent">
       <div className="max-w-[1200px] mx-auto p-4 flex items-center">
         <div className="md:w-[50%] w-full p-4 self-stretch border rounded-md">
           <div>
@@ -120,7 +125,7 @@ const CotizadorComponent = ({prices}) => {
                   if(isNaN(e.key) && e.keyCode!=8 && e.keyCode!=37 && e.keyCode!=39 && e.keyCode!=46 && e.key!='.'){
                     e.preventDefault();
                   }
-                }} autoFocus />
+                }} autoFocus id="inversion" />
               </div>
 
             </div>
@@ -133,12 +138,12 @@ const CotizadorComponent = ({prices}) => {
                   <img src="/bitcoin.png" alt="logo bitcoin" />
                 </div>
                 <div className="flex-1 p-1">
-                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrencyWithOutFixed(priceBitcoin)} />
+                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrencyWithOutFixed(priceBitcoin)} id="priceBitcoin" />
                 </div>
               </div>
               <div className="w-full self-stretch rounded-md border border-1 border-[#999999] flex ml-2">
                 <div className="flex-1 p-1">
-                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrency(qtyBitcoin)} />
+                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrency(qtyBitcoin)} id="qtyBitcoin" />
                 </div>
               </div>
             </div>
@@ -151,12 +156,12 @@ const CotizadorComponent = ({prices}) => {
                   <img src="/ethereum.png" alt="logo ethereum" />
                 </div>
                 <div className="flex-1 p-1">
-                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrencyWithOutFixed(priceEthereum)} />
+                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrencyWithOutFixed(priceEthereum)} id="priceEthereum" />
                 </div>
               </div>
               <div className="w-full self-stretch rounded-md border border-1 border-[#999999] flex ml-2">
                 <div className="flex-1 p-1">
-                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrency(qtyEthereum)} />
+                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrency(qtyEthereum)} id="qtyEthereum" />
                 </div>
               </div>
             </div>
@@ -169,12 +174,12 @@ const CotizadorComponent = ({prices}) => {
                   <img src="/cardano.png" alt="logo cardano" />
                 </div>
                 <div className="flex-1 p-1">
-                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrencyWithOutFixed(priceCardano)} />
+                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrencyWithOutFixed(priceCardano)} id="priceCardano" />
                 </div>
               </div>
               <div className="w-full self-stretch rounded-md border border-1 border-[#999999] flex ml-2">
                 <div className="flex-1 p-1">
-                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrency(qtyCardano)} />
+                  <input type="text" className="w-full h-full bg-black outline-none text-white pl-2 font-bold text-lg" placeholder="0" readOnly value={formatCurrency(qtyCardano)} id="qtyCardano" />
                 </div>
               </div>
             </div>
@@ -186,11 +191,11 @@ const CotizadorComponent = ({prices}) => {
             Resultado de la Inversion
           </h2>      
           <div className="flex justify-center mt-2">
-                <button onClick={(e)=>setMonths(months-1)} className="border-0 outline-0 bg-[#ff9332] text-black mr-2 px-2 font-bold text-3x flex justify-center items-center w-[30px] rounded"> - </button>
+                <button onClick={(e)=>changeMonths(months-1)} className="border-0 outline-0 bg-[#ff9332] text-black mr-2 px-2 font-bold text-3x flex justify-center items-center w-[30px] rounded"> - </button>
                 <span className="text-white text-lg font-semibold">
-                  { months } (meses)
+                  <span id="months">{ months }</span> (meses)
                 </span>
-                <button onClick={(e)=>setMonths(months+1)} className="border-0 outline-0 bg-[#ff9332] text-black ml-2 px-2 font-bold text-3x flex justify-center items-center w-[30px] rounded-md"> + </button>
+                <button onClick={(e)=>changeMonths(months+1)} className="border-0 outline-0 bg-[#ff9332] text-black ml-2 px-2 font-bold text-3x flex justify-center items-center w-[30px] rounded-md"> + </button>
           </div>
           <div className="mt-4">
             <span className="text-[#999999] flex mb-2">
@@ -199,12 +204,12 @@ const CotizadorComponent = ({prices}) => {
             </span>
             <div className="bg-[rgba(48,209,88,0.15)] text-[#6ccf59] rounded-md h-full p-2 flex justify-between">
               <div>
-                Ganancia: USD ${ formatCurrency(revenue.btc.amount) }
+                Ganancia: USD $<span id="amount_bitcoin">{ formatCurrency(revenue.btc.amount) }</span>
                 <br />
-                Retorno: USD ${ formatCurrency(revenue.btc.total) }
+                Retorno: USD $<span id="total_bitcoin">{ formatCurrency(revenue.btc.total) }</span> 
               </div>
               <div>
-                Bitcoins: { formatCurrency(revenue.btc.change) }
+                Bitcoins: <span id="change_bitcoin">{ formatCurrency(revenue.btc.change) }</span> 
               </div>
                 
             </div>
@@ -216,12 +221,12 @@ const CotizadorComponent = ({prices}) => {
             </span>
             <div className="bg-[rgba(48,209,88,0.15)] text-[#6ccf59] rounded-md h-full p-2 flex justify-between">
               <div>
-                Ganancia: USD ${ formatCurrency(revenue.etc.amount) }
+                Ganancia: USD $<span id="amount_ethereum">{ formatCurrency(revenue.etc.amount) }</span>
                 <br />
-                Retorno: USD ${ formatCurrency(revenue.etc.total) }
+                Retorno: USD $<span id="total_ethereum">{ formatCurrency(revenue.etc.total) }</span>
               </div>
               <div>
-                Ethereums: { formatCurrency(revenue.etc.change) }
+                Ethereums: <span id="change_ethereum">{ formatCurrency(revenue.etc.change) }</span>
               </div>
             </div>
           </div> 
@@ -232,12 +237,12 @@ const CotizadorComponent = ({prices}) => {
             </span>
             <div className="bg-[rgba(48,209,88,0.15)] text-[#6ccf59] rounded-md h-full p-2 flex justify-between">
               <div>
-                Ganancia: USD ${ formatCurrency(revenue.ada.amount) }
+                Ganancia: USD $<span id="amount_cardano">{ formatCurrency(revenue.ada.amount) }</span>
                 <br />
-                Retorno: USD ${ formatCurrency(revenue.ada.total) }
+                Retorno: USD $<span id="total_cardano">{ formatCurrency(revenue.ada.total) }</span>
               </div>
               <div>
-                Cardanos: { formatCurrency(revenue.ada.change) }
+                Cardanos: <span id="change_cardano">{ formatCurrency(revenue.ada.change) }</span>
               </div>
             </div>
           </div> 

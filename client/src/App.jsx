@@ -8,13 +8,12 @@ import DataTable from './components/DataTable';
 const socket = io.connect('http://localhost:8081');
 
 function App() {
-  const [prices, setPrices] = useState([]);
+  const [coins, setCoins] = useState([]);
 
   useEffect(()=>{
-    socket.on('send_prices', (data)=>{
-      if(data.data){
-        setPrices(data.data);
-      }
+    socket.on('send_coins', (data)=>{
+      console.log(data);
+      setCoins(data);
     })
   }, [socket]);
 
@@ -24,22 +23,12 @@ function App() {
 
       <div className="h-[70px]"></div>
 
-      <CotizadorComponent prices={prices} />  
+      <CotizadorComponent coins={coins} />  
 
-      <DataTable />     
+      <DataTable coins={coins} />     
 
       <FooterComponent></FooterComponent>
 
-      {/* <div>
-        <input type="text" placeholder='message' />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-      <div>
-        {data}
-      </div>
-      <div className='text-3xl font-bold underline'>
-        texto
-      </div> */}
     </div>
   )
 }

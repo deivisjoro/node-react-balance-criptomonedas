@@ -1,74 +1,11 @@
 import {useState, useEffect} from 'react';
-import io from 'socket.io-client';
 import { LineChart, Line } from 'recharts';
 import { CSVLink } from 'react-csv';
 import useData from '../helpers/useData';
+import transformArray from '../helpers/transformArray';
 
-const socket = io.connect('http://localhost:8081');
+const DataTable = ({coins}) => {
 
-const initialState = [
-//   {
-//     id: 'bitcoin',
-//     symbol: 'btc',
-//     name: 'Bitcoin',
-//     market_data:{
-//       current_price: {
-//         usd: 8949
-//       },
-//       market_cap: {usd: 569332979517},
-//       price_change_percentage_1h_in_currency: {usd:-1.21278},
-//       price_change_percentage_24h_in_currency: {usd: 0.15547},
-//       price_change_percentage_7d_in_currency: {usd:-1.2433},
-//       price_change_percentage_30d_in_currency: {usd:-6.76599},
-//       price_change_percentage_1y_in_currency: {usd:25.81069},
-//       total_volume: {usd: 17104278860}
-//     },
-//     seven_day_trend: [],      
-//   },
-//   {
-//     id: 'ethereum',
-//     symbol: 'eth',
-//     name: 'Ethereum',
-//     market_data:{
-//       current_price: {
-//         usd: 8949
-//       },
-//       market_cap: {usd: 569332979517},
-//       price_change_percentage_1h_in_currency: {usd: 4.053},
-//       price_change_percentage_24h_in_currency: {usd: 0.15547},
-//       price_change_percentage_7d_in_currency: {usd:-1.2433},
-//       price_change_percentage_30d_in_currency: {usd:-6.76599},
-//       price_change_percentage_1y_in_currency: {usd:25.81069},
-//       total_volume: {usd: 17104278860}
-//     },
-//     seven_day_trend: [],
-      
-//   },
-//   {
-//     id: 'cardano',
-//     symbol: 'ada',
-//     name: 'Cardano',
-//     market_data:{
-//       current_price: {
-//         usd: 8949
-//       },
-//       market_cap: {usd: 569332979517},
-//       price_change_percentage_1h_in_currency: {usd:-1.21278},
-//       price_change_percentage_24h_in_currency: {usd: 0.15547},
-//       price_change_percentage_7d_in_currency: {usd:-1.2433},
-//       price_change_percentage_30d_in_currency: {usd:-6.76599},
-//       price_change_percentage_1y_in_currency: {usd:25.81069},
-//       total_volume: {usd: 17104278860}
-//     },
-//     seven_day_trend: [],        
-//   },
-]
-
-
-
-const DataTable = () => {
-
-  const [coins, setCoins] = useState(initialState);
   const [report, setReport] = useState({
     filename: 'Report.csv',
     data: [],
@@ -76,21 +13,15 @@ const DataTable = () => {
   });
   const [items, setItems] = useState([]);
 
-  useEffect(()=>{
-    socket.on('send_coins', (data)=>{
-      console.log(data);
-      setCoins(data);
-      
-      const { headers, rows } = useData(data);
-      setReport({
-        ...report,
-        headers,
-        data: rows
-      });
-      setItems(rows);
-    })    
-  
-  }, [socket]);
+  useEffect(()=>{      
+    const { headers, rows } = useData(coins);
+    setReport({
+      ...report,
+      headers,
+      data: rows
+    });
+    setItems(rows);   
+  }, [coins]);
 
   const formatCurrency = (value, places = 5) => {
     value = Number(value);
@@ -182,11 +113,7 @@ const DataTable = () => {
                             </td>                                                
                             <td className="py-3 px-2">
                               <span>
-                                <LineChart width={100} height={50} data={[
-                                  {valor: item.market_data.price_change_percentage_1y_in_currency.usd}, {valor: item.market_data.price_change_percentage_200d_in_currency.usd}, {valor: item.market_data.price_change_percentage_60d_in_currency.usd},
-                                {valor: item.market_data.price_change_percentage_30d_in_currency.usd},{valor: item.market_data.price_change_percentage_14d_in_currency.usd},
-                                {valor: item.market_data.price_change_percentage_7d_in_currency.usd},
-                                {valor: item.market_data.price_change_percentage_24h_in_currency.usd}]}>
+                                <LineChart width={100} height={50} data={transformArray(item.market_data.sparkline_7d.price)}>
                                   <Line type="monotone" dataKey="valor" stroke="#8884d8" />
                                 </LineChart>
                               </span>
