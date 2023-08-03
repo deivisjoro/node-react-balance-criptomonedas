@@ -1,6 +1,6 @@
 # Fronted del cotizador
 
-Para instalar el fronted debe realizar los siguientes pasos:
+Para instalar el frontend debe realizar los siguientes pasos:
 
 ## Instalacion
 
